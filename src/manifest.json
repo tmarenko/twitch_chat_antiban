@@ -1,5 +1,11 @@
 {
    "author": "Timofey Marenko",
+   "applications": {
+      "gecko": {
+         "id": "twitchantiban@timofey",
+         "strict_min_version": "52.0"
+      }
+   },
    "browser_action": {
       "default_icon": {
          "16": "images/icon16.png",
