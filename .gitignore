@@ -1,2 +1,6 @@
 # IDE
 .idea
+package-lock.json
+output
+node_modules
+src*.zip

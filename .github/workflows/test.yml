@@ -1,0 +1,32 @@
+name: Test Extension
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 0"
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: Test Chrome extension
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: npm install
+
+      - name: Run tests
+        run: npm test
+        env:
+          SELENIUM_REMOTE_URL: ${{ secrets.SELENIUM_REMOTE_URL }}
+          TWITCH_BANNED_USER_NAME: ${{ secrets.TWITCH_BANNED_USER_NAME }}
+          TWITCH_BANNED_USER_PASSWORD: ${{ secrets.TWITCH_BANNED_USER_PASSWORD }}
+          TWITCH_NON_BANNED_CHANNEL: ${{ secrets.TWITCH_NON_BANNED_CHANNEL }}
+          TWITCH_BANNED_CHANNEL: ${{ secrets.TWITCH_BANNED_CHANNEL }}
+          TWITCH_2FA_SECRET: ${{ secrets.TWITCH_2FA_SECRET }}
+
+      - uses: actions/upload-artifact@master
+        if: always()
+        with:
+          name: output
+          path: ${{github.workspace}}/output
