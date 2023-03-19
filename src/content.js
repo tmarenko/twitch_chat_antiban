@@ -1,12 +1,14 @@
 function exists(selector) {
-    return document.querySelectorAll(selector).length > 0;
+    return $(selector).length > 0;
 }
 
 function isBanned() {
 	return [
 		'[data-test-selector="banned-user-message"]',
 		'[data-test-selector="request-unban-link"]',
-		'[data-test-selector="cooldown-text"]'
+		'[data-test-selector="cooldown-text"]',
+        '.banned-chat-overlay__halt',
+        '.banned-chat-overlay__circle'
 	].some(exists);
 }
 
