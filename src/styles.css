@@ -1,0 +1,11 @@
+.chat-list--default {
+    overflow-y: scroll;
+    width: 100%;
+    height: 100%;
+    padding-right: 17px;
+    box-sizing: content-box;
+}
+
+.inline-image {
+    display: inline-flex;
+}
