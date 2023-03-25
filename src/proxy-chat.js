@@ -250,7 +250,7 @@ ProxyChat = {
 
                     switch (message.command) {
                         case "PING":
-                            ProxyChat.socket.send(`PONG ${message.params[0]}`);
+                            ProxyChat.socket.send(`PONG :${message.source.nickname}`);
                             return;
                         case "JOIN":
                             ProxyChat.log(`Joined channel: ${ProxyChat.channel}`);
