@@ -222,14 +222,14 @@ ProxyChat = {
 
     connect: function (channel) {
         if (ProxyChat.socket) ProxyChat.disconnect();
-        ProxyChat.channel = channel;
+        ProxyChat.channel = channel.toLowerCase();
 
         ProxyChat.loadChannelData().then(() => {
             ProxyChat.log('Connecting to chat server...');
             ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', {reconnectInterval: 2000});
 
             ProxyChat.socket.onopen = function () {
-                ProxyChat.log(`Connected to #${channel}`);
+                ProxyChat.log(`Connected to #${ProxyChat.channel}`);
                 ProxyChat.socket.send('PASS pass\r\n');
                 ProxyChat.socket.send(`NICK justinfan${Math.floor(Math.random() * 999999)}\r\n`);
                 ProxyChat.socket.send('CAP REQ :twitch.tv/commands twitch.tv/tags\r\n');
@@ -262,7 +262,7 @@ ProxyChat = {
                             if (message['target-user-id']) ProxyChat.clearAllMessages(message['target-user-id']);
                             return;
                         case "PRIVMSG":
-                            if (message.channel !== channel || !message.msg) return;
+                            if (message.channel.toLowerCase() !== ProxyChat.channel || !message.msg) return;
                             ProxyChat.writeChat(message);
                             return;
                     }
