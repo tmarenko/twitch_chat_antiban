@@ -166,10 +166,10 @@ ProxyChat = {
 
     log: function (message) {
         ProxyChat.writeChat({
-            'display-name': "ProxyChat",
+            'display-name': "Twitch Chat Anti-Ban",
             'msg': message
         });
-        console.log(`ProxyChat: ${message}`);
+        console.log(`Twitch Chat Anti-Ban: ${message}`);
     },
 
     clearMessage: function (messageId) {
@@ -195,7 +195,7 @@ ProxyChat = {
             }
             // scroll down
             const chatContainer = document.querySelector('.chat-list--default');
-            const scrollThreshold = 0.8; // 10% from bottom of container
+            const scrollThreshold = 0.8; // 20% from bottom of container
             const isScrolledNearBottom = chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + chatContainer.clientHeight * (1 - scrollThreshold);
             if (isScrolledNearBottom) {
                 chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
