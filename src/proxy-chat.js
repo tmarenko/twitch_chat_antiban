@@ -184,22 +184,37 @@ ProxyChat = {
         }, 100);
     },
 
+    initChat: function () {
+        let proxyChat = $(`<div id="proxy-chat"></div>`);
+        let chatPaused = $(`<div class="chat-paused"><span>Scroll Down</span></div>`);
+        let chatContainer = $('.chat-room__content').children().first();
+        chatContainer.removeClass();
+        chatContainer.addClass("chat-list--default");
+        chatContainer.html(proxyChat);
+        chatContainer.append(chatPaused);
+        chatPaused.on("click", () => {
+            const chatContainer = $('.chat-list--default');
+            chatContainer.scrollTop(chatContainer.prop('scrollHeight') - chatContainer.innerHeight());
+            $('.chat-paused').hide();
+        });
+        chatPaused.hide();
+    },
+
     updateChat: setInterval(function () {
         if (ProxyChat.messages.length > 0) {
-            $('#proxy-chat').append(ProxyChat.messages.join(''));
+            ProxyChat.messages.forEach(message => {
+                const chatContainer = $('.chat-list--default');
+                const isScrolledNearBottom = chatContainer.prop('scrollHeight') - chatContainer.innerHeight() <= chatContainer.scrollTop() + chatContainer.innerHeight() * 0.2; // 20% from bottom of container
+                $('#proxy-chat').append(message);
+                if (isScrolledNearBottom) {
+                    chatContainer.scrollTop(chatContainer.prop('scrollHeight') - chatContainer.innerHeight());
+                    $('.chat-paused').hide();
+                } else {
+                    $('.chat-paused').show();
+                }
+            })
             ProxyChat.messages = [];
-            let linesToDelete = $('.chat-line').length - 100;
-            while (linesToDelete > 0) {
-                $('.chat-line').eq(0).remove();
-                linesToDelete--;
-            }
-            // scroll down
-            const chatContainer = document.querySelector('.chat-list--default');
-            const scrollThreshold = 0.8; // 20% from bottom of container
-            const isScrolledNearBottom = chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + chatContainer.clientHeight * (1 - scrollThreshold);
-            if (isScrolledNearBottom) {
-                chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
-            }
+            $('.chat-line:lt(-200)').remove();
         }
     }, 200),
 

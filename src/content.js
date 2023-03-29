@@ -12,17 +12,13 @@ function isBanned() {
     ].some(exists);
 }
 
-$(document).ready(() => {
+$(function () {
     window.setInterval(function () {
         if (isBanned() && !exists('#proxy-chat')) {
             console.log("Loading proxy chat");
             let channel = (location.href.indexOf('popout') > -1) ? location.href.split('/')[4] : location.href.split('/')[3];
-            let proxyChat = `<div id="proxy-chat"></div>`;
-            let chatContainer = $('.chat-room__content').children().first();
-            chatContainer.removeClass();
-            chatContainer.addClass("chat-list--default");
-            chatContainer.html(proxyChat);
+            ProxyChat.initChat();
             ProxyChat.connect(channel);
         }
     }, 3000);
-});
+})
