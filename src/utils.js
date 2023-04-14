@@ -7,10 +7,44 @@ async function fetchJson(url, headers = {}) {
 }
 
 function getTwitchUserId(username) {
-    return fetchJson(`https://%APIURL%/getTwitchUserId?username=${username}`)
-        .then(data => {
-            return data;
+    return getFromStorage(username)
+        .then((userId) => {
+            if (userId) {
+                console.log('Twitch Chat Anti-Ban: found channel ID in local storage:', userId);
+                return userId;
+            } else {
+                return fetchJson(
+                    `https://%APIURL%/getTwitchUserId?username=${username}`
+                ).then((data) => {
+                    if (data) {
+                        storeToStorage(username, data).then(() => {
+                            console.log('Twitch Chat Anti-Ban: channel ID stored in local storage:', data);
+                        });
+                    }
+                    return data;
+                });
+            }
         });
+}
+
+function getFromStorage(key) {
+    return new Promise((resolve) => {
+        if (typeof browser !== 'undefined') {
+            browser.storage.local.get([key]).then((result) => resolve(result[key]));
+        } else {
+            chrome.storage.local.get([key], (result) => resolve(result[key]));
+        }
+    });
+}
+
+function storeToStorage(key, value) {
+    return new Promise((resolve) => {
+        if (typeof browser !== 'undefined') {
+            browser.storage.local.set({[key]: value}).then(resolve);
+        } else {
+            chrome.storage.local.set({[key]: value}, resolve);
+        }
+    });
 }
 
 function parseIRCMessage(message) {

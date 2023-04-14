@@ -14,6 +14,9 @@
       "matches": [ "*://*.twitch.tv/*" ],
       "run_at": "document_end"
    } ],
+   "permissions": [
+      "storage"
+   ],
    "description": "Automatically opens a proxy chat if you are banned in a channel.",
    "icons": {
       "128": "images/icon128.png",
@@ -22,5 +25,5 @@
    },
    "manifest_version": 3,
    "name": "Twitch Chat Anti-Ban",
-   "version": "2.3"
+   "version": "2.4"
 }
