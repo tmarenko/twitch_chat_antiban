@@ -6,13 +6,8 @@ async function fetchJson(url, headers = {}) {
     return await response.json();
 }
 
-function TwitchAPI(path) {
-    const url = `https://api.twitch.tv/helix${path}`;
-    const headers = {
-        "Client-Id": "%CLIENTTOKEN%",
-        "Authorization": "%AUTHTOKEN%"
-    };
-    return fetchJson(url, headers)
+function getTwitchUserId(username) {
+    return fetchJson(`https://%APIURL%/getTwitchUserId?username=${username}`)
         .then(data => {
             return data;
         });

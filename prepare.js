@@ -26,11 +26,10 @@ function prepareExtension() {
   fs.unlinkSync(path.join(tempChromePath, 'manifest.firefox.json'));
   fs.unlinkSync(path.join(tempFirefoxPath, 'manifest.firefox.json'));
 
-  // 5. Replace tokens
-  const clientToken = process.env.CLIENTTOKEN;
-  const authToken = process.env.AUTHTOKEN;
-  replaceTokens(tempChromePath, clientToken, authToken);
-  replaceTokens(tempFirefoxPath, clientToken, authToken);
+  // 5. Replace external API
+  const apiUrl = process.env.APIURL;
+  replaceTokens(tempChromePath, apiUrl);
+  replaceTokens(tempFirefoxPath, apiUrl);
 
   // 6. Archive extensions
   archiveExtension(tempChromePath, `src-chrome-${version}.zip`, 'src');
@@ -65,12 +64,11 @@ function archiveExtension(dirPath, name, dir = false) {
   });
 }
 
-function replaceTokens(dirPath, clientToken, authToken) {
+function replaceTokens(dirPath, apiUrl) {
   const utilsFilePath = path.join(dirPath, 'utils.js');
   const utilsContent = fs.readFileSync(utilsFilePath, 'utf8');
   const replacedContent = utilsContent
-    .replace(/%CLIENTTOKEN%/g, clientToken)
-    .replace(/%AUTHTOKEN%/g, authToken);
+    .replace(/%APIURL%/g, apiUrl)
   fs.writeFileSync(utilsFilePath, replacedContent);
 }
 

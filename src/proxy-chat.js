@@ -9,8 +9,8 @@ ProxyChat = {
     badges: {},
 
     loadChannelData: async function () {
-        return TwitchAPI(`/users?login=${ProxyChat.channel}`).then(async response => {
-            ProxyChat.channelId = response.data[0].id;
+        return getTwitchUserId(ProxyChat.channel).then(async response => {
+            ProxyChat.channelId = response;
             await ProxyChat.loadThirdPartyEmotes();
             await ProxyChat.loadTwitchBadges();
         });
