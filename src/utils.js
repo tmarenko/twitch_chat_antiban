@@ -6,28 +6,24 @@ async function fetchJson(url, headers = {}) {
     return await response.json();
 }
 
-function getTwitchUserId(username) {
-    return getFromStorage(username)
-        .then((userId) => {
-            if (userId) {
-                console.log('Twitch Chat Anti-Ban: found channel ID in local storage:', userId);
-                return userId;
-            } else {
-                return fetchJson(
-                    `https://%APIURL%/getTwitchUserId?username=${username}`
-                ).then((data) => {
-                    if (data) {
-                        storeToStorage(username, data).then(() => {
-                            console.log('Twitch Chat Anti-Ban: channel ID stored in local storage:', data);
-                        });
-                    }
-                    return data;
-                });
-            }
-        });
+async function getTwitchUserId(username) {
+    const userId = await getFromStorage(username);
+    if (userId) {
+        console.log('Twitch Chat Anti-Ban: found channel ID in local storage:', userId);
+        return userId;
+    } else {
+        const data = await fetchJson(
+            `https://%APIURL%/getTwitchUserId?username=${username}`
+        );
+        if (data) {
+            await storeToStorage(username, data);
+            console.log('Twitch Chat Anti-Ban: channel ID stored in local storage:', data);
+        }
+        return data;
+    }
 }
 
-function getFromStorage(key) {
+async function getFromStorage(key) {
     return new Promise((resolve) => {
         if (typeof browser !== 'undefined') {
             browser.storage.local.get([key]).then((result) => resolve(result[key]));
@@ -37,7 +33,7 @@ function getFromStorage(key) {
     });
 }
 
-function storeToStorage(key, value) {
+async function storeToStorage(key, value) {
     return new Promise((resolve) => {
         if (typeof browser !== 'undefined') {
             browser.storage.local.set({[key]: value}).then(resolve);

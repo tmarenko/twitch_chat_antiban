@@ -9,11 +9,14 @@ ProxyChat = {
     badges: {},
 
     loadChannelData: async function () {
-        return getTwitchUserId(ProxyChat.channel).then(async response => {
-            ProxyChat.channelId = response;
+        const channelId = await getTwitchUserId(ProxyChat.channel);
+        if (channelId === null) {
+            ProxyChat.log(`Unable to fetch channel ID for channel name: ${ProxyChat.channel}`);
+        } else {
+            ProxyChat.channelId = channelId;
             await ProxyChat.loadThirdPartyEmotes();
             await ProxyChat.loadTwitchBadges();
-        });
+        }
     },
 
     loadTwitchBadges: async function () {
@@ -240,6 +243,8 @@ ProxyChat = {
         ProxyChat.channel = channel.toLowerCase();
 
         ProxyChat.loadChannelData().then(() => {
+            if (!ProxyChat.channelId) return;
+
             ProxyChat.log('Connecting to chat server...');
             ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', {reconnectInterval: 2000});
 
