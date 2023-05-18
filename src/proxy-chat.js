@@ -22,8 +22,8 @@ ProxyChat = {
     loadTwitchBadges: async function () {
         const globalBadges = await fetchJson('https://badges.twitch.tv/v1/badges/global/display');
         const channelBadges = await fetchJson(`https://badges.twitch.tv/v1/badges/channels/${ProxyChat.channelId}/display`);
-        ProxyChat.parseTwitchBadges(globalBadges.badge_sets);
-        ProxyChat.parseTwitchBadges(channelBadges.badge_sets);
+        ProxyChat.parseTwitchBadges(globalBadges?.badge_sets ?? {});
+        ProxyChat.parseTwitchBadges(channelBadges?.badge_sets ?? {});
     },
 
     loadThirdPartyEmotes: async function () {
