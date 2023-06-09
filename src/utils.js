@@ -1,9 +1,14 @@
 const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#E05B5B", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
 
 async function fetchJson(url, headers = {}) {
-    const response = await fetch(url, {headers});
-    if (!response.ok) return null;
-    return await response.json();
+    try {
+        const response = await fetch(url, { headers });
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.log(`'Twitch Chat Anti-Ban: unable to fetch from ${url}: ${error}`);
+        return null;
+    }
 }
 
 async function getTwitchUserId(username) {
