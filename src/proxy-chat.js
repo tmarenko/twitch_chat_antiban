@@ -20,10 +20,10 @@ ProxyChat = {
     },
 
     loadTwitchBadges: async function () {
-        const globalBadges = await fetchJson('https://badges.twitch.tv/v1/badges/global/display');
-        const channelBadges = await fetchJson(`https://badges.twitch.tv/v1/badges/channels/${ProxyChat.channelId}/display`);
-        ProxyChat.parseTwitchBadges(globalBadges?.badge_sets ?? {});
-        ProxyChat.parseTwitchBadges(channelBadges?.badge_sets ?? {});
+        const globalBadges = await getTwitchBadges('global');
+        const channelBadges = await getTwitchBadges(ProxyChat.channelId);
+        ProxyChat.parseTwitchBadges(globalBadges?.data ?? []);
+        ProxyChat.parseTwitchBadges(channelBadges?.data ?? []);
     },
 
     loadThirdPartyEmotes: async function () {
@@ -70,12 +70,12 @@ ProxyChat = {
         ProxyChat.thirdPartyEmoteCodesByPriority.sort((a, b) => b.length - a.length);
     },
 
-    parseTwitchBadges: function (badgeSets) {
-        for (const [set, versions] of Object.entries(badgeSets)) {
-            for (const [version, data] of Object.entries(versions.versions)) {
-                const key = `${set}/${version}`;
+    parseTwitchBadges: function (badgeData) {
+        for (const badge of badgeData) {
+            for (const version of badge.versions) {
+                const key = `${badge.set_id}/${version.id}`;
                 ProxyChat.badges[key] = {
-                    src: data.image_url_1x
+                    src: version.image_url_1x
                 };
             }
         }

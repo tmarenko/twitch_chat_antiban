@@ -12,20 +12,41 @@ async function fetchJson(url, headers = {}) {
 }
 
 async function getTwitchUserId(username) {
-    const userId = await getFromStorage(username);
+    const userId = await getFromStorage(username.toString());
     if (userId) {
         console.log('Twitch Chat Anti-Ban: found channel ID in local storage:', userId);
         return userId;
-    } else {
-        const data = await fetchJson(
-            `https://%APIURL%/getTwitchUserId?username=${username}`
-        );
-        if (data) {
-            await storeToStorage(username, data);
-            console.log('Twitch Chat Anti-Ban: channel ID stored in local storage:', data);
-        }
-        return data;
     }
+    const data = await fetchJson(
+        `https://%APIURL%/getTwitchUserId?username=${username}`
+    );
+    if (data) {
+        await storeToStorage(username, data);
+        console.log('Twitch Chat Anti-Ban: channel ID stored in local storage:', data);
+    }
+    return data;
+}
+
+async function getTwitchBadges(userId) {
+    const cachedBadges = await getFromStorage(userId.toString());
+    if (cachedBadges) {
+        const badges = JSON.parse(cachedBadges);
+        if (new Date().getTime() - badges.timestamp < 24 * 60 * 60 * 1000) {
+            console.log(`Twitch Chat Anti-Ban: found badges (${userId}) in local storage`);
+            return badges.data;
+        }
+    }
+    const data = await fetchJson(
+        `https://%APIURL%/getTwitchBadges?user=${userId}`
+    );
+    if (data) {
+        await storeToStorage(userId, JSON.stringify({
+            data: data,
+            timestamp: new Date().getTime(),
+        }, null, 0));
+        console.log(`Twitch Chat Anti-Ban: badges (${userId}) are stored in local storage`);
+    }
+    return data;
 }
 
 async function getFromStorage(key) {
