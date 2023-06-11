@@ -75,7 +75,8 @@ ProxyChat = {
             for (const version of badge.versions) {
                 const key = `${badge.set_id}/${version.id}`;
                 ProxyChat.badges[key] = {
-                    src: version.image_url_1x
+                    src1x: version.image_url_1x,
+                    src4x: version.image_url_4x
                 };
             }
         }
@@ -146,10 +147,10 @@ ProxyChat = {
                 </div>`;
     },
 
-    wrapBadge: function (badgeSrc) {
+    wrapBadge: function (badgeData) {
         return `<div class="inline-image">
                     <div class="chat-badge">
-                        <img class="chat-image" src="${badgeSrc}"/>
+                        <img class="chat-image" src="${badgeData.src1x}" srcset="${badgeData.src1x} 1x, ${badgeData.src4x} 4x"/>
                     </div>
                 </div>`;
     },
@@ -159,8 +160,8 @@ ProxyChat = {
         if (message.badges) {
             message.badges.split(',').forEach(badge => {
                 if (badge in ProxyChat.badges) {
-                    const badgeSrc = ProxyChat.badges[badge].src;
-                    badges.push(ProxyChat.wrapBadge(badgeSrc));
+                    const badgeData = ProxyChat.badges[badge];
+                    badges.push(ProxyChat.wrapBadge(badgeData));
                 }
             });
         }
