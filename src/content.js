@@ -16,7 +16,9 @@ $(function () {
     window.setInterval(function () {
         if (isBanned() && !exists('#proxy-chat')) {
             console.log("Twitch Chat Anti-Ban: loading proxy chat");
-            let channel = location.pathname.split('/').filter(segment => segment && segment !== 'popout' && segment !== 'chat').shift();
+            let channel = location.pathname.split('/').filter(
+                segment => segment && segment !== 'popout' && segment !== 'chat' && segment !== 'embed'
+            ).shift();
             ProxyChat.initChat();
             ProxyChat.connect(channel);
         }

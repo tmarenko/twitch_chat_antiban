@@ -1,5 +1,5 @@
 {
-   "author": "Timofey Marenko",
+   "author": "Timofei Marenko",
    "action": {
       "default_icon": {
          "16": "images/icon16.png",
@@ -26,5 +26,5 @@
    },
    "manifest_version": 3,
    "name": "Twitch Chat Anti-Ban",
-   "version": "2.9"
+   "version": "2.10"
 }
