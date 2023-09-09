@@ -243,6 +243,10 @@ ProxyChat = {
         if (ProxyChat.socket) ProxyChat.disconnect();
         ProxyChat.channel = channel.toLowerCase();
 
+        let disconnectTimeout;
+        let lastDisconnectedTime = null;
+        const reconnectionThreshold = 5000;
+
         ProxyChat.loadChannelData().then(() => {
             if (!ProxyChat.channelId) return;
 
@@ -250,7 +254,10 @@ ProxyChat = {
             ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', {reconnectInterval: 2000});
 
             ProxyChat.socket.onopen = function () {
-                ProxyChat.log(`Connected to #${ProxyChat.channel}`);
+                clearTimeout(disconnectTimeout);
+                if (lastDisconnectedTime === null || (Date.now() - lastDisconnectedTime) > reconnectionThreshold) {
+                    ProxyChat.log(`Connected to #${ProxyChat.channel}`);
+                }
                 ProxyChat.socket.send('PASS pass\r\n');
                 ProxyChat.socket.send(`NICK justinfan${Math.floor(Math.random() * 999999)}\r\n`);
                 ProxyChat.socket.send('CAP REQ :twitch.tv/commands twitch.tv/tags\r\n');
@@ -261,7 +268,10 @@ ProxyChat = {
                 ProxyChat.log('Connection timeout, reconnecting...');
             };
             ProxyChat.socket.onclose = function () {
-                ProxyChat.log('Disconnected');
+                lastDisconnectedTime = Date.now();
+                disconnectTimeout = setTimeout(function () {
+                    ProxyChat.log('Disconnected');
+                }, reconnectionThreshold);
             };
 
             ProxyChat.socket.onmessage = function (data) {
