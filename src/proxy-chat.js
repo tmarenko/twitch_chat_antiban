@@ -7,6 +7,7 @@ ProxyChat = {
     thirdPartyEmotes: {},
     thirdPartyEmoteCodesByPriority: [],
     badges: {},
+    pingIntervalID: null,
 
     loadChannelData: async function () {
         const channelId = await getTwitchUserId(ProxyChat.channel);
@@ -262,12 +263,19 @@ ProxyChat = {
                 ProxyChat.socket.send(`NICK justinfan${Math.floor(Math.random() * 999999)}\r\n`);
                 ProxyChat.socket.send('CAP REQ :twitch.tv/commands twitch.tv/tags\r\n');
                 ProxyChat.socket.send(`JOIN #${ProxyChat.channel}\r\n`);
+
+                clearInterval(ProxyChat.pingIntervalID);
+                ProxyChat.pingIntervalID = setInterval(function () {
+                    ProxyChat.socket.send('PING\r\n');
+                }, 4 * 60 * 1000);
             };
 
             ProxyChat.socket.ontimeout = function () {
                 ProxyChat.log('Connection timeout, reconnecting...');
             };
+
             ProxyChat.socket.onclose = function () {
+                clearInterval(ProxyChat.pingIntervalID);
                 lastDisconnectedTime = Date.now();
                 disconnectTimeout = setTimeout(function () {
                     ProxyChat.log('Disconnected');
@@ -281,7 +289,7 @@ ProxyChat = {
 
                     switch (message.command) {
                         case "PING":
-                            ProxyChat.socket.send(`PONG :${message.source.nickname}`);
+                            ProxyChat.socket.send(`PONG ${message.msg}\r\n`);
                             return;
                         case "JOIN":
                             ProxyChat.log(`Joined channel: ${ProxyChat.channel}`);
@@ -306,6 +314,10 @@ ProxyChat = {
         if (ProxyChat.socket) {
             ProxyChat.socket.close();
             ProxyChat.socket = null;
+        }
+        if (ProxyChat.pingIntervalID) {
+            clearInterval(ProxyChat.pingIntervalID);
+            ProxyChat.pingIntervalID = null;
         }
     }
 }
