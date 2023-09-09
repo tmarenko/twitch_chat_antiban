@@ -71,6 +71,13 @@ async function storeToStorage(key, value) {
 
 function parseIRCMessage(message) {
     const parsedMessage = {};
+
+    if (message.startsWith('PING')) {
+        parsedMessage.command = 'PING';
+        parsedMessage.msg = message.split(' ').slice(1).join(' ');
+        return parsedMessage;
+    }
+
     const [tags, source, command, channel, ...msg] = message.split(' ');
 
     if (tags.startsWith('@')) {
