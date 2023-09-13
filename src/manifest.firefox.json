@@ -4,5 +4,6 @@
          "id": "twitchantiban@timofey",
          "strict_min_version": "101.0"
       }
-   }
+   },
+   "manifest_version": 2
 }

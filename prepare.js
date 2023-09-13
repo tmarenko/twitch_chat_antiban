@@ -19,7 +19,7 @@ function prepareExtension() {
 
   // 3. Combine manifest files in temp-firefox
   const firefoxManifest = JSON.parse(fs.readFileSync(path.join(tempFirefoxPath, 'manifest.firefox.json'), 'utf8'));
-  const combinedManifest = Object.assign(manifest, firefoxManifest);
+  const combinedManifest = { ...manifest, ...firefoxManifest, ...{ action: undefined } };
   fs.writeFileSync(path.join(tempFirefoxPath, 'manifest.json'), JSON.stringify(combinedManifest));
 
   // 4. Delete manifest.firefox.json
