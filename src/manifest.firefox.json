@@ -5,5 +5,12 @@
          "strict_min_version": "101.0"
       }
    },
+   "permissions": [
+      "storage",
+      "*://*.amazonaws.com/*",
+      "*://*.betterttv.net/*",
+      "*://*.7tv.app/*",
+      "*://*.twitch.tv/*"
+   ],
    "manifest_version": 2
 }
