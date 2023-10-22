@@ -10,7 +10,8 @@
       "*://*.amazonaws.com/*",
       "*://*.betterttv.net/*",
       "*://*.7tv.app/*",
-      "*://*.twitch.tv/*"
+      "*://*.twitch.tv/*",
+      "*://*.ttvnw.net/*"
    ],
    "manifest_version": 2
 }

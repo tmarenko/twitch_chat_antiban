@@ -1,8 +1,12 @@
 const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#E05B5B", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
 
-async function fetchJson(url, headers = {}) {
+async function fetchJson(url, method = "GET", headers = {}, body = null) {
     try {
-        const response = await fetch(url, { headers });
+        const response = await fetch(url, {
+            method: method,
+            headers: headers,
+            body: body
+        });
         if (!response.ok) return null;
         return await response.json();
     } catch (error) {
