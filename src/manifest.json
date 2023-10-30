@@ -32,13 +32,13 @@
   "permissions": [
     "storage"
   ],
-  "description": "Automatically opens a proxy chat if you are banned in a channel.",
+  "description": "Automatically opens a proxy stream & chat if you are banned in a channel.",
   "icons": {
     "128": "images/icon128.png",
     "16": "images/icon16.png",
     "48": "images/icon48.png"
   },
   "manifest_version": 3,
-  "name": "Twitch Chat Anti-Ban",
+  "name": "Twitch Anti-Ban",
   "version": "3.0"
 }
