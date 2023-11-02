@@ -32,19 +32,19 @@ function getChannel() {
 $(function () {
     window.setInterval(function () {
         if (isBanned() && !exists('#proxy-chat')) {
-            console.log("Twitch Chat Anti-Ban: loading proxy chat");
+            console.log("Twitch Anti-Ban: loading proxy chat");
             ProxyChat.initChat();
             ProxyChat.connect(getChannel());
         }
 
         if (isStreamBanned() && !exists('#proxy-stream')) {
-            console.log("Twitch Chat Anti-Ban: loading proxy stream");
+            console.log("Twitch Anti-Ban: loading proxy stream");
             ProxyStream.restoreOriginalPlayer();
             ProxyStream.initStream(getChannel());
         }
 
         if (ProxyStream.channel && ProxyStream.channel !== getChannel()) {
-            console.log("Twitch Chat Anti-Ban: restoring original player");
+            console.log("Twitch Anti-Ban: restoring original player");
             ProxyStream.restoreOriginalPlayer();
         }
     }, 3000);

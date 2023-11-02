@@ -37,7 +37,7 @@ ProxyStream = {
             if (!response.ok) return null;
             return await response.text();
         } catch (error) {
-            console.log(`'Twitch Chat Anti-Ban: unable to fetch from ${url}: ${error}`);
+            console.log(`'Twitch Anti-Ban: unable to fetch from ${url}: ${error}`);
             return null;
         }
     },
@@ -78,7 +78,9 @@ ProxyStream = {
                 });
 
                 hls.on(Hls.Events.ERROR, function (event, data) {
-                    ProxyChat.log('Error event:', event, data);
+                    if (event && data) {
+                        console.log('Twitch Anti-Ban:', event, data);
+                    }
                 });
             });
         } else {

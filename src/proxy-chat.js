@@ -171,10 +171,10 @@ ProxyChat = {
 
     log: function (message) {
         ProxyChat.writeChat({
-            'display-name': "Twitch Chat Anti-Ban",
+            'display-name': "Twitch Anti-Ban",
             'msg': message
         });
-        console.log(`Twitch Chat Anti-Ban: ${message}`);
+        console.log(`Twitch Anti-Ban: ${message}`);
     },
 
     clearMessage: function (messageId) {
