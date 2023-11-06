@@ -54,14 +54,17 @@ ProxyChat = {
             });
         }
 
-        for (const endpoint of ['emotes/global', `users/${ProxyChat.channelId}/emotes`]) {
-            const stvEmotes = await fetchJson(`https://api.7tv.app/v2/${endpoint}`);
-            stvEmotes?.forEach(emote => {
+        for (const endpoint of ['emote-sets/global', `users/twitch/${ProxyChat.channelId}`]) {
+            const stvEmotes = await fetchJson(`https://7tv.io/v3/${endpoint}`);
+            const emotes = stvEmotes.emote_set ? stvEmotes.emote_set.emotes : stvEmotes.emotes;
+            emotes?.forEach(emote => {
+                const bestQualityEmote = emote.data.host.files.pop();
+                const lowestQualityEmote = emote.data.host.files.shift();
                 ProxyChat.thirdPartyEmotes[emote.name] = {
                     id: emote.id,
-                    src: emote.urls[emote.urls.length - 1][1],
-                    width: `${emote.width[0] / 10}rem`,
-                    height: `${emote.height[0] / 10}rem`
+                    src: `https:${emote.data.host.url}/${bestQualityEmote.name}`,
+                    width: `${lowestQualityEmote.width / 10}rem`,
+                    height: `${lowestQualityEmote.height / 10}rem`
                 };
             });
         }
