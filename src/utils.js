@@ -10,7 +10,7 @@ async function fetchJson(url, method = "GET", headers = {}, body = null) {
         if (!response.ok) return null;
         return await response.json();
     } catch (error) {
-        console.log(`'Twitch Anti-Ban: unable to fetch from ${url}: ${error}`);
+        console.log(`Twitch Anti-Ban: unable to fetch from ${url}: ${error}`);
         return null;
     }
 }
