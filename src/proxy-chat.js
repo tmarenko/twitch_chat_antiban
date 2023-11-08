@@ -242,7 +242,10 @@ ProxyChat = {
     },
 
     connect: function (channel) {
-        if (ProxyChat.socket) ProxyChat.disconnect();
+        if (ProxyChat.socket) {
+            ProxyChat.socket.onclose = function () {};
+            ProxyChat.disconnect();
+        }
         ProxyChat.channel = channel.toLowerCase();
 
         let disconnectTimeout;
