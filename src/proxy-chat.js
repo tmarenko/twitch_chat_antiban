@@ -33,7 +33,7 @@ ProxyChat = {
 
         for (const endpoint of ['emotes/global', `users/twitch/${ProxyChat.channelId}`]) {
             const ffzEmotes = await fetchJson(`https://api.betterttv.net/3/cached/frankerfacez/${endpoint}`);
-            ffzEmotes?.forEach(emote => {
+            (ffzEmotes ?? []).forEach(emote => {
                 ProxyChat.thirdPartyEmotes[emote.code] = {
                     id: emote.id,
                     src: emote.images['4x'] || emote.images['2x'] || emote.images['1x']
@@ -43,9 +43,7 @@ ProxyChat = {
 
         for (const endpoint of ['emotes/global', `users/twitch/${ProxyChat.channelId}`]) {
             let bttvEmotes = await fetchJson(`https://api.betterttv.net/3/cached/${endpoint}`);
-            if (bttvEmotes && !Array.isArray(bttvEmotes)) {
-                bttvEmotes = bttvEmotes.channelEmotes.concat(bttvEmotes.sharedEmotes);
-            }
+            bttvEmotes = Array.isArray(bttvEmotes) ? bttvEmotes : bttvEmotes?.channelEmotes.concat(bttvEmotes?.sharedEmotes) ?? [];
             bttvEmotes?.forEach(emote => {
                 ProxyChat.thirdPartyEmotes[emote.code] = {
                     id: emote.id,
@@ -56,7 +54,7 @@ ProxyChat = {
 
         for (const endpoint of ['emote-sets/global', `users/twitch/${ProxyChat.channelId}`]) {
             const stvEmotes = await fetchJson(`https://7tv.io/v3/${endpoint}`);
-            const emotes = stvEmotes.emote_set ? stvEmotes.emote_set.emotes : stvEmotes.emotes;
+            const emotes = stvEmotes?.emote_set?.emotes ?? stvEmotes?.emotes ?? [];
             emotes?.forEach(emote => {
                 const bestQualityEmote = emote.data.host.files.pop();
                 const lowestQualityEmote = emote.data.host.files.shift();
