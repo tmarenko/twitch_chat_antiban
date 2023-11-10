@@ -8,6 +8,37 @@ ProxyChat = {
     thirdPartyEmoteCodesByPriority: [],
     badges: {},
     pingIntervalID: null,
+    twitch: {
+        chatSettings: {
+            fontSizePreference: 'default',
+            repliesAppearancePreference: 'minimum',
+            showAutoModActions: true,
+            showMessageFlags: true,
+            showModerationActions: true,
+            showModIcons: true,
+            showTimestamps: false,
+            viewerChatFilterEnabled: false
+        },
+        cssFontScale: {
+            small: 'font-scale--small',
+            default: 'font-scale--default',
+            bigger: 'font-scale--bigger',
+            biggest: 'font-scale--biggest'
+        }
+    }
+    ,
+
+    retrieveTwitchChatSettings: function () {
+        const settings = JSON.parse(localStorage.getItem('chatSettings'));
+        if (!settings) {
+            ProxyChat.log('unable to retrieve chat settings, using defaults');
+            return;
+        }
+
+        Object.keys(settings).map(x => {
+            ProxyChat.twitch.chatSettings[x] = settings[x]
+        })
+    },
 
     loadChannelData: async function () {
         const channelId = await getTwitchUserId(ProxyChat.channel);
@@ -191,7 +222,10 @@ ProxyChat = {
     },
 
     initChat: function () {
+        ProxyChat.retrieveTwitchChatSettings();
+
         let proxyChat = $(`<div id="proxy-chat"></div>`);
+        proxyChat.addClass(ProxyChat.twitch.cssFontScale[ProxyChat.twitch.chatSettings.fontSizePreference]);
         let chatPaused = $(`<div class="chat-paused"><span>Scroll Down</span></div>`);
         let chatContainer = $('.chat-room__content').children().first();
         chatContainer.removeClass();
@@ -226,6 +260,13 @@ ProxyChat = {
 
     writeChat: function (message) {
         const chatLine = $('<div></div>');
+
+        if(ProxyChat.twitch.chatSettings.showTimestamps) {
+            const timestamp = $('<span class="chat-line__timestamp" data-a-target="chat-timestamp" data-test-selector="chat-timestamp"></span>');
+            timestamp.append(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            chatLine.append(timestamp);
+        }
+
         const userInfo = $('<span></span>');
         chatLine.addClass('chat-line chat-line__message');
         chatLine.attr('data-user-id', message['user-id']);
@@ -243,7 +284,7 @@ ProxyChat = {
 
     connect: function (channel) {
         if (ProxyChat.socket) {
-            ProxyChat.socket.onclose = function () {};
+            ProxyChat.socket.onclose = function () { };
             ProxyChat.disconnect();
         }
         ProxyChat.channel = channel.toLowerCase();
@@ -256,7 +297,7 @@ ProxyChat = {
             if (!ProxyChat.channelId) return;
 
             ProxyChat.log('Connecting to chat server...');
-            ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', {reconnectInterval: 2000});
+            ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', { reconnectInterval: 2000 });
 
             ProxyChat.socket.onopen = function () {
                 clearTimeout(disconnectTimeout);

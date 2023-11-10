@@ -1,5 +1,7 @@
 const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#E05B5B", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
 
+let browser = browser || chrome;
+
 async function fetchJson(url, method = "GET", headers = {}, body = null) {
     try {
         const response = await fetch(url, {
@@ -55,21 +57,13 @@ async function getTwitchBadges(userId) {
 
 async function getFromStorage(key) {
     return new Promise((resolve) => {
-        if (typeof browser !== 'undefined') {
-            browser.storage.local.get([key]).then((result) => resolve(result[key]));
-        } else {
-            chrome.storage.local.get([key], (result) => resolve(result[key]));
-        }
+        browser.storage.local.get([key]).then((result) => resolve(result[key]));
     });
 }
 
 async function storeToStorage(key, value) {
     return new Promise((resolve) => {
-        if (typeof browser !== 'undefined') {
-            browser.storage.local.set({[key]: value}).then(resolve);
-        } else {
-            chrome.storage.local.set({[key]: value}, resolve);
-        }
+        browser.storage.local.set({ [key]: value }).then(resolve);
     });
 }
 
@@ -96,7 +90,7 @@ function parseIRCMessage(message) {
     if (source.startsWith(':')) {
         const sourceString = source.substring(1);
         const [nickname, user, host] = sourceString.split(/[!@]/);
-        parsedMessage.source = {nickname, user, host};
+        parsedMessage.source = { nickname, user, host };
     }
 
     parsedMessage.command = command;
