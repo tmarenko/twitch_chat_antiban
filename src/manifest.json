@@ -32,6 +32,13 @@
   "permissions": [
     "storage"
   ],
+  "host_permissions": [
+    "*://*.amazonaws.com/*",
+    "*://*.betterttv.net/*",
+    "*://*.7tv.io/*",
+    "*://*.twitch.tv/*",
+    "*://*.ttvnw.net/*"
+  ],
   "description": "Automatically opens a proxy stream & chat if you are banned in a channel.",
   "icons": {
     "128": "images/icon128.png",
@@ -40,5 +47,5 @@
   },
   "manifest_version": 3,
   "name": "Twitch Anti-Ban",
-  "version": "3.3"
+  "version": "4.0"
 }

@@ -8,6 +8,37 @@ ProxyChat = {
     thirdPartyEmoteCodesByPriority: [],
     badges: {},
     pingIntervalID: null,
+    twitch: {
+        chatSettings: {
+            fontSizePreference: 'default',
+            repliesAppearancePreference: 'minimum',
+            showAutoModActions: true,
+            showMessageFlags: true,
+            showModerationActions: true,
+            showModIcons: true,
+            showTimestamps: false,
+            viewerChatFilterEnabled: false
+        },
+        cssFontScale: {
+            small: 'font-scale--small',
+            default: 'font-scale--default',
+            bigger: 'font-scale--bigger',
+            biggest: 'font-scale--biggest'
+        }
+    }
+    ,
+
+    retrieveTwitchChatSettings: function () {
+        const settings = JSON.parse(localStorage.getItem('chatSettings'));
+        if (!settings) {
+            ProxyChat.log('unable to retrieve chat settings, using defaults');
+            return;
+        }
+
+        Object.keys(settings).map(x => {
+            ProxyChat.twitch.chatSettings[x] = settings[x]
+        })
+    },
 
     loadChannelData: async function () {
         const channelId = await getTwitchUserId(ProxyChat.channel);
@@ -87,6 +118,15 @@ ProxyChat = {
     replaceTwitchEmotes: function (message) {
         if (!message.emotes) return message.msg;
         let msg = message.msg;
+
+        /* Ugly prevention of XSS attacks by escaping HTML elements before 
+        adding <img>, since we need to render the emotes as HTML elements.
+        Should be enough, since a text node in the DOM is a node with a string 
+        of characters, which implies no HTML interpretation, but a good special 
+        characters encoding into HTML entities. 
+        https://developer.mozilla.org/en-US/docs/Glossary/Entity */
+        msg = $('<span></span>').text(msg).text();
+
         const emoteCodes = {};
 
         message.emotes.split("/").forEach((emote) => {
@@ -119,22 +159,33 @@ ProxyChat = {
         return msg;
     },
 
-    wrapUsername: function (message) {
+    wrapUsername: function (ircMessage) {
         const usernameElement = $('<span class="chat-author__display-name"></span>');
-        const color = message.color || twitchColors[message['display-name'].charCodeAt(0) % 16];
+        const color = ircMessage.color || twitchColors[ircMessage['display-name'].charCodeAt(0) % 16];
         usernameElement.css('color', color);
-        usernameElement.html(message['display-name'] ?? message.source.nickname);
+        usernameElement.html(ircMessage['display-name'] ?? ircMessage.source.nickname);
         return usernameElement;
     },
 
-    wrapMessage: function (message) {
+    wrapMessage: function (ircMessage) {
         const messageElement = $('<span></span>');
-        if (message.action) {
-            const color = message.color || this.twitchColors[message['display-name'].charCodeAt(0) % 16];
+
+        /* Trying to handle /ME messages.. but the attribute 'action' 
+        is not specified in the Twitch documentation?
+        Instead, the action seems to be set in the emote tag:
+
+        "It’s possible for the emotes flag’s value to be set to 
+        an action instead of identifying an emote."
+
+        https://dev.twitch.tv/docs/irc/tags/#privmsg-tags
+        */
+        if (ircMessage.action) {
+            const color = ircMessage.color || this.twitchColors[ircMessage['display-name'].charCodeAt(0) % 16];
             messageElement.css('color', color);
         }
+
         let msgWithEmotes;
-        msgWithEmotes = ProxyChat.replaceTwitchEmotes(message);
+        msgWithEmotes = ProxyChat.replaceTwitchEmotes(ircMessage);
         msgWithEmotes = ProxyChat.replaceThirdPartyEmotes(msgWithEmotes);
         messageElement.html(msgWithEmotes);
         return messageElement;
@@ -191,7 +242,10 @@ ProxyChat = {
     },
 
     initChat: function () {
+        ProxyChat.retrieveTwitchChatSettings();
+
         let proxyChat = $(`<div id="proxy-chat"></div>`);
+        proxyChat.addClass(ProxyChat.twitch.cssFontScale[ProxyChat.twitch.chatSettings.fontSizePreference]);
         let chatPaused = $(`<div class="chat-paused"><span>Scroll Down</span></div>`);
         let chatContainer = $('.chat-room__content').children().first();
         chatContainer.removeClass();
@@ -224,26 +278,34 @@ ProxyChat = {
         }
     }, 200),
 
-    writeChat: function (message) {
+    writeChat: function (ircMessage) {
         const chatLine = $('<div></div>');
+
+        if(ProxyChat.twitch.chatSettings.showTimestamps) {
+            const timestamp = $('<span class="chat-line__timestamp" data-a-target="chat-timestamp" data-test-selector="chat-timestamp"></span>');
+            timestamp.append(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            chatLine.append(timestamp);
+        }
+
         const userInfo = $('<span></span>');
         chatLine.addClass('chat-line chat-line__message');
-        chatLine.attr('data-user-id', message['user-id']);
-        chatLine.attr('data-id', message.id);
-        ProxyChat.wrapBadges(message).forEach(badge => {
+        chatLine.attr('data-user-id', ircMessage['user-id']);
+        chatLine.attr('data-id', ircMessage.id);
+
+        ProxyChat.wrapBadges(ircMessage).forEach(badge => {
             userInfo.append(badge);
         });
-        userInfo.append(ProxyChat.wrapUsername(message));
-        userInfo.append(message.action ? '<span>&nbsp;</span>' : '<span class="colon">: </span>');
-
+        userInfo.append(ProxyChat.wrapUsername(ircMessage));
+        userInfo.append(ircMessage.action ? '<span>&nbsp;</span>' : '<span class="colon">: </span>');
         chatLine.append(userInfo);
-        chatLine.append(ProxyChat.wrapMessage(message));
+
+        chatLine.append(ProxyChat.wrapMessage(ircMessage));
         ProxyChat.messages.push(chatLine.wrap('<div>').parent().html());
     },
 
     connect: function (channel) {
         if (ProxyChat.socket) {
-            ProxyChat.socket.onclose = function () {};
+            ProxyChat.socket.onclose = function () { };
             ProxyChat.disconnect();
         }
         ProxyChat.channel = channel.toLowerCase();
@@ -256,7 +318,7 @@ ProxyChat = {
             if (!ProxyChat.channelId) return;
 
             ProxyChat.log('Connecting to chat server...');
-            ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', {reconnectInterval: 2000});
+            ProxyChat.socket = new ReconnectingWebSocket('wss://irc-ws.chat.twitch.tv', 'irc', { reconnectInterval: 2000 });
 
             ProxyChat.socket.onopen = function () {
                 clearTimeout(disconnectTimeout);

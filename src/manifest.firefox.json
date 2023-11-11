@@ -4,14 +4,5 @@
          "id": "twitchantiban@timofey",
          "strict_min_version": "101.0"
       }
-   },
-   "permissions": [
-      "storage",
-      "*://*.amazonaws.com/*",
-      "*://*.betterttv.net/*",
-      "*://*.7tv.io/*",
-      "*://*.twitch.tv/*",
-      "*://*.ttvnw.net/*"
-   ],
-   "manifest_version": 2
+   }
 }
