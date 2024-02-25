@@ -1,36 +1,9 @@
 ProxyStream = {
 
-    clientId: "%CLIENTID%",
     channel: null,
 
-    getAccessToken: async function (channel) {
-        const body = {
-            operationName: "PlaybackAccessToken",
-            extensions: {
-                persistedQuery: {
-                    version: 1,
-                    sha256Hash: "0828119ded1c13477966434e15800ff57ddacf13ba1911c129dc2200705b0712"
-                }
-            },
-            variables: {
-                isLive: true,
-                login: channel,
-                isVod: false,
-                vodID: "",
-                playerType: "embed"
-            }
-        };
-
-        const data = await fetchJson('https://gql.twitch.tv/gql', 'POST', {
-            'Client-id': ProxyStream.clientId,
-            'Content-Type': 'application/json'
-        }, JSON.stringify(body));
-
-        return data?.data?.streamPlaybackAccessToken ?? null;
-    },
-
-    getPlaylist: async function (channel, accessToken) {
-        const url = `https://usher.ttvnw.net/api/channel/hls/${channel}.m3u8?client_id=${ProxyStream.clientId}&token=${accessToken.value}&sig=${accessToken.signature}&allow_source=true&allow_audio_only=true`;
+    getPlaylist: async function (channel,) {
+        const url = `https://%APIURL%/getTwitchPlaylist?channel=${channel}`;
 
         try {
             const response = await fetch(url);
@@ -48,8 +21,7 @@ ProxyStream = {
     },
 
     getStreamPlaylist: function (channel) {
-        return ProxyStream.getAccessToken(channel)
-            .then(accessToken => ProxyStream.getPlaylist(channel, accessToken))
+        return ProxyStream.getPlaylist(channel)
             .then(playlist => ProxyStream.convertToPlaylistBlob(playlist));
     },
 
