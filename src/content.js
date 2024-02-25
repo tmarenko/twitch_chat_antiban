@@ -23,9 +23,22 @@ function isStreamBanned() {
 
 
 function getChannel() {
+    // support for embedded location
+    const search = location.search.substring(1); // Remove the '?' at the start
+    const params = search.split('&').reduce((acc, current) => {
+        const [key, value] = current.split('=');
+        acc[key] = value;
+        return acc;
+    }, {});
+
+    if (params.channel) {
+        return decodeURIComponent(params.channel);
+    }
+
+    // support for twitch.tv location
     return location.pathname.split('/').filter(
-                segment => segment && segment !== 'popout' && segment !== 'chat' && segment !== 'embed'
-            ).shift();
+        segment => segment && segment !== 'popout' && segment !== 'chat' && segment !== 'embed'
+    ).shift();
 }
 
 
