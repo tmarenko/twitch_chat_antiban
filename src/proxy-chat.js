@@ -53,31 +53,21 @@ ProxyChat = {
         }
 
         for (const endpoint of ['emote-sets/global', `users/twitch/${ProxyChat.channelId}`]) {
-    const stvEmotes = await fetchJson(`https://7tv.io/v3/${endpoint}`);
-    const emotes = stvEmotes?.emote_set?.emotes ?? stvEmotes?.emotes ?? [];
-
-    emotes.forEach(emote => {
-        // Check if emote and required properties exist before accessing them
-        if (emote?.data?.host?.files && emote?.name) {
-            const bestQualityEmote = emote.data.host.files.pop();
-            const lowestQualityEmote = emote.data.host.files.shift();
-            
-            // Ensure the required properties are valid
-            if (bestQualityEmote?.name && lowestQualityEmote?.width && lowestQualityEmote?.height) {
-                ProxyChat.thirdPartyEmotes[emote.name] = {
-                    id: emote.id,
-                    src: `https:${emote.data.host.url}/${bestQualityEmote.name}`,
-                    width: `${lowestQualityEmote.width / 10}rem`,
-                    height: `${lowestQualityEmote.height / 10}rem`
-                };
-            } else {
-                console.error("Invalid emote file properties:", emote);
-            }
-        } else {
-            console.error("Invalid emote data:", emote);
+            const stvEmotes = await fetchJson(`https://7tv.io/v3/${endpoint}`);
+            const emotes = stvEmotes?.emote_set?.emotes ?? stvEmotes?.emotes ?? [];
+            emotes?.forEach(emote => {
+                if (emote?.data?.host?.files?.length && emote.data.host.url?.trim()) {
+                    const bestQualityEmote = emote.data.host.files.pop();
+                    const lowestQualityEmote = emote.data.host.files.shift();
+                    ProxyChat.thirdPartyEmotes[emote.name] = {
+                        id: emote.id,
+                        src: `https:${emote.data.host.url}/${bestQualityEmote.name}`,
+                        width: `${lowestQualityEmote.width / 10}rem`,
+                        height: `${lowestQualityEmote.height / 10}rem`
+                    };
+                }
+            });
         }
-    });
-}
 
         // store emotes priority by its length
         ProxyChat.thirdPartyEmoteCodesByPriority = Object.keys(ProxyChat.thirdPartyEmotes);
