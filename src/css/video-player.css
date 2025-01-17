@@ -1,0 +1,174 @@
+.anti-ban-video-player-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.anti-ban-video-player {
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.anti-ban-video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.anti-ban-video-player-container:hover .anti-ban-video-controls {
+    opacity: 1;
+}
+
+.anti-ban-play-pause-btn,
+.anti-ban-volume-btn,
+.anti-ban-quality-selector {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    height: 40px;
+}
+
+.anti-ban-volume-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 40px;
+}
+
+.anti-ban-volume-slider {
+    width: 100px;
+    height: 8px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(to right, #9147ff 0%, #9147ff 100%, rgba(255, 255, 255, 0.2) 100%);
+    border-radius: 4px;
+    margin: 0;
+    padding: 0;
+    align-self: center;
+}
+
+.anti-ban-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.anti-ban-volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 0;
+    transform: none;
+}
+
+.anti-ban-volume-slider::-moz-range-track {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.anti-ban-volume-slider::-moz-range-progress {
+    background-color: #9147ff;
+    height: 8px;
+    border-radius: 4px;
+}
+
+.anti-ban-volume-slider::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 4px;
+}
+
+.anti-ban-player-title {
+    color: white;
+    font-size: 14px;
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+.anti-ban-quality-control {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
+}
+
+.anti-ban-quality-selector {
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.anti-ban-quality-selector:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.anti-ban-quality-menu {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background: rgba(0, 0, 0, 0.95);
+    border-radius: 4px;
+    padding: 8px 0;
+    display: none;
+    margin-bottom: 10px;
+    min-width: 150px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.anti-ban-quality-menu.active {
+    display: block;
+}
+
+.anti-ban-quality-option {
+    color: white;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    transition: background-color 0.2s, color 0.2s;
+    display: block;
+    width: 100%;
+    text-align: left;
+}
+
+.anti-ban-quality-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.anti-ban-quality-option.active {
+    color: #9147ff;
+    background: rgba(145, 71, 255, 0.1);
+} 

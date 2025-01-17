@@ -44,13 +44,13 @@ function getChannel() {
 
 $(function () {
     window.setInterval(function () {
-        if (isBanned() && !exists('#proxy-chat')) {
+        if (isBanned() && !exists('#anti-ban-chat')) {
             console.log("Twitch Anti-Ban: loading proxy chat");
             ProxyChat.initChat();
             ProxyChat.connect(getChannel());
         }
 
-        if (isStreamBanned() && !exists('#proxy-stream')) {
+        if (isStreamBanned() && !exists('#anti-ban-stream')) {
             console.log("Twitch Anti-Ban: loading proxy stream");
             ProxyStream.restoreOriginalPlayer();
             ProxyStream.initStream(getChannel());

@@ -10,7 +10,7 @@
     display: inline-flex;
 }
 
-.chat-paused {
+.anti-ban-chat-paused {
     cursor: pointer;
     position: absolute;
     bottom: 10em;
@@ -25,12 +25,12 @@
     outline: 0.25rem solid;
 }
 
-#proxy-stream {
+#anti-ban-stream {
     width: 100%;
     height: 100%;
 }
 
-#proxy-stream-player {
+#anti-ban-stream-player {
     width: 100%;
     height: 100%;
-}
+} 

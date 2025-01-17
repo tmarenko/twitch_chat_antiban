@@ -11,7 +11,8 @@
   "content_scripts": [
     {
       "css": [
-        "styles.css"
+        "css/chat.css",
+        "css/video-player.css"
       ],
       "js": [
         "hls.min.js",

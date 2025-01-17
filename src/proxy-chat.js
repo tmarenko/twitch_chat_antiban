@@ -193,8 +193,8 @@ ProxyChat = {
     },
 
     initChat: function () {
-        let proxyChat = $(`<div id="proxy-chat"></div>`);
-        let chatPaused = $(`<div class="chat-paused"><span>Scroll Down</span></div>`);
+        let proxyChat = $(`<div id="anti-ban-chat"></div>`);
+        let chatPaused = $(`<div class="anti-ban-chat-paused"><span>Scroll Down</span></div>`);
         let chatContainer = $('.chat-room__content').children().first();
         chatContainer.removeClass();
         chatContainer.addClass("chat-list--default");
@@ -203,7 +203,7 @@ ProxyChat = {
         chatPaused.on("click", () => {
             const chatContainer = $('.chat-list--default');
             chatContainer.scrollTop(chatContainer.prop('scrollHeight') - chatContainer.innerHeight());
-            $('.chat-paused').hide();
+            $('.anti-ban-chat-paused').hide();
         });
         chatPaused.hide();
     },
@@ -213,12 +213,12 @@ ProxyChat = {
             ProxyChat.messages.forEach(message => {
                 const chatContainer = $('.chat-list--default');
                 const isScrolledNearBottom = chatContainer.prop('scrollHeight') - chatContainer.innerHeight() <= chatContainer.scrollTop() + chatContainer.innerHeight() * 0.2; // 20% from bottom of container
-                $('#proxy-chat').append(message);
+                $('#anti-ban-chat').append(message);
                 if (isScrolledNearBottom) {
                     chatContainer.scrollTop(chatContainer.prop('scrollHeight') - chatContainer.innerHeight());
-                    $('.chat-paused').hide();
+                    $('.anti-ban-chat-paused').hide();
                 } else {
-                    $('.chat-paused').show();
+                    $('.anti-ban-chat-paused').show();
                 }
             })
             ProxyChat.messages = [];
