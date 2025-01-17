@@ -77,7 +77,7 @@ function archiveExtension(dirPath, name, dir = false) {
 }
 
 function replaceTokens(dirPath, apiUrl) {
-  const utilsFilePath = path.join(dirPath, 'utils.js');
+  const utilsFilePath = path.join(dirPath, 'scripts', 'utils.js');
   const utilsContent = fs.readFileSync(utilsFilePath, 'utf8');
   const replacedContent = utilsContent
     .replace(/%APIURL%/g, apiUrl)

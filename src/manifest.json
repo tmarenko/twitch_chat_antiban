@@ -14,13 +14,13 @@
         "css/video-player.css"
       ],
       "js": [
-        "hls.min.js",
-        "jquery.min.js",
-        "proxy-chat.js",
-        "proxy-stream.js",
-        "reconnecting-websocket.min.js",
-        "utils.js",
-        "content.js"
+        "scripts/libs/hls.min.js",
+        "scripts/libs/jquery.min.js",
+        "scripts/libs/reconnecting-websocket.min.js",
+        "scripts/proxy-chat.js",
+        "scripts/proxy-stream.js",
+        "scripts/utils.js",
+        "scripts/content.js"
       ],
       "matches": [
         "*://*.twitch.tv/*"
@@ -30,7 +30,7 @@
     }
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "scripts/background.js"
   },
   "host_permissions": [
     "*://*.amazonaws.com/*",
