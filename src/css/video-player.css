@@ -22,15 +22,22 @@
     gap: 15px;
     opacity: 0;
     transition: opacity 0.3s;
+    z-index: 1000;
 }
 
-.anti-ban-video-player-container:hover .anti-ban-video-controls {
+.anti-ban-video-player-container:hover .anti-ban-video-controls:not(.inactive) {
     opacity: 1;
+}
+
+.anti-ban-video-controls.inactive {
+    opacity: 0 !important;
+    pointer-events: none;
 }
 
 .anti-ban-play-pause-btn,
 .anti-ban-volume-btn,
-.anti-ban-quality-selector {
+.anti-ban-quality-selector,
+.anti-ban-fullscreen-btn {
     background: transparent;
     border: none;
     color: white;
@@ -42,6 +49,15 @@
     justify-content: center;
     line-height: 1;
     height: 40px;
+}
+
+.anti-ban-fullscreen-btn {
+    margin-left: 10px;
+    transition: transform 0.2s;
+}
+
+.anti-ban-fullscreen-btn:hover {
+    transform: scale(1.1);
 }
 
 .anti-ban-volume-container {

@@ -88,6 +88,7 @@ ProxyStream = {
                                 ${qualityMenuItems}
                             </div>
                         </div>
+                        <button class="anti-ban-fullscreen-btn">⛶</button>
                     </div>
                 </div>
             </div>`;
@@ -101,6 +102,33 @@ ProxyStream = {
         const volumeSlider = container.find('.anti-ban-volume-slider');
         const qualityBtn = container.find('.anti-ban-quality-selector');
         const qualityMenu = container.find('.anti-ban-quality-menu');
+        const fullscreenBtn = container.find('.anti-ban-fullscreen-btn');
+        const videoContainer = container.find('.anti-ban-video-player-container')[0];
+        const controls = container.find('.anti-ban-video-controls');
+        let controlsTimeout;
+
+        const showControls = () => {
+            controls.removeClass('inactive');
+            if (controlsTimeout) {
+                clearTimeout(controlsTimeout);
+            }
+            if (document.fullscreenElement) {
+                controlsTimeout = setTimeout(() => {
+                    if (!video.paused) {
+                        controls.addClass('inactive');
+                    }
+                }, 2000);
+            }
+        };
+
+        container.on('mousemove', showControls);
+        container.on('mouseenter', showControls);
+        
+        container.on('mouseleave', () => {
+            if (document.fullscreenElement && !video.paused) {
+                controls.addClass('inactive');
+            }
+        });
 
         playPauseBtn.on('click', () => {
             if (video.paused) {
@@ -190,8 +218,18 @@ ProxyStream = {
             }
         });
 
-        container.on('mouseleave', () => {
-            qualityMenu.removeClass('active');
+        fullscreenBtn.on('click', () => {
+            if (!document.fullscreenElement) {
+                videoContainer.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable fullscreen: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            fullscreenBtn.text(document.fullscreenElement ? '⛶' : '⛶');
         });
     },
 
