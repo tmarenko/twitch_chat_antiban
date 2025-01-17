@@ -55,6 +55,18 @@ async function getTwitchBadges(userId) {
     return data;
 }
 
+async function getTwitchStreamPlaylist(channel) {
+    try {
+        return await browserApi.runtime.sendMessage({
+            type: 'fetchText',
+            url: `https://%APIURL%/getTwitchPlaylist?channel=${channel}`
+        });
+    } catch (error) {
+        console.log(`'Twitch Anti-Ban: unable to fetch playlist: ${error}`);
+        return null;
+    }
+}
+
 async function getFromStorage(key) {
     return new Promise((resolve) => {
         browserApi.storage.local.get([key]).then((result) => resolve(result[key]));

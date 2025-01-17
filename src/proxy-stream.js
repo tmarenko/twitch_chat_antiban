@@ -4,25 +4,13 @@ ProxyStream = {
     currentQuality: null,
     qualities: [],
 
-    getPlaylist: async function (channel,) {
-        try {
-            return await chrome.runtime.sendMessage({
-                type: 'fetchText',
-                url: `https://%APIURL%/getTwitchPlaylist?channel=${channel}`
-            });
-        } catch (error) {
-            console.log(`'Twitch Anti-Ban: unable to fetch playlist: ${error}`);
-            return null;
-        }
-    },
-
     convertToPlaylistBlob: function (playlist) {
         const blob = new Blob([playlist], {type: 'application/vnd.apple.mpegurl'});
         return URL.createObjectURL(blob);
     },
 
     getStreamPlaylist: function (channel) {
-        return ProxyStream.getPlaylist(channel)
+        return getTwitchStreamPlaylist(channel)
             .then(playlist => {
                 if (!playlist) {
                     console.log('Twitch Anti-Ban: Stream is offline');
