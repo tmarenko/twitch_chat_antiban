@@ -3,14 +3,13 @@ ProxyStream = {
     channel: null,
 
     getPlaylist: async function (channel,) {
-        const url = `https://%APIURL%/getTwitchPlaylist?channel=${channel}`;
-
         try {
-            const response = await fetch(url);
-            if (!response.ok) return null;
-            return await response.text();
+            return await chrome.runtime.sendMessage({
+                type: 'fetchText',
+                url: `https://%APIURL%/getTwitchPlaylist?channel=${channel}`
+            });
         } catch (error) {
-            console.log(`'Twitch Anti-Ban: unable to fetch from ${url}: ${error}`);
+            console.log(`'Twitch Anti-Ban: unable to fetch playlist: ${error}`);
             return null;
         }
     },

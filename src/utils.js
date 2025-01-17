@@ -1,14 +1,16 @@
+const browserApi = typeof browser !== 'undefined' ? browser : chrome;
 const twitchColors = ["#FF0000", "#0000FF", "#008000", "#B22222", "#E05B5B", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57", "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"];
 
 async function fetchJson(url, method = "GET", headers = {}, body = null) {
     try {
-        const response = await fetch(url, {
-            method: method,
-            headers: headers,
-            body: body
+        const response = await browserApi.runtime.sendMessage({
+            type: 'fetchJson',
+            url,
+            method,
+            headers,
+            body
         });
-        if (!response.ok) return null;
-        return await response.json();
+        return response;
     } catch (error) {
         console.log(`Twitch Anti-Ban: unable to fetch from ${url}: ${error}`);
         return null;
@@ -55,21 +57,13 @@ async function getTwitchBadges(userId) {
 
 async function getFromStorage(key) {
     return new Promise((resolve) => {
-        if (typeof browser !== 'undefined') {
-            browser.storage.local.get([key]).then((result) => resolve(result[key]));
-        } else {
-            chrome.storage.local.get([key], (result) => resolve(result[key]));
-        }
+        browserApi.storage.local.get([key]).then((result) => resolve(result[key]));
     });
 }
 
 async function storeToStorage(key, value) {
     return new Promise((resolve) => {
-        if (typeof browser !== 'undefined') {
-            browser.storage.local.set({[key]: value}).then(resolve);
-        } else {
-            chrome.storage.local.set({[key]: value}, resolve);
-        }
+        browserApi.storage.local.set({[key]: value}).then(resolve);
     });
 }
 

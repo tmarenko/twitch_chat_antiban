@@ -18,9 +18,10 @@ function prepareExtension() {
   copyFolderRecursiveSync(path.join(__dirname, 'src'), tempFirefoxPath);
 
   // 3. Combine manifest files in temp-firefox
-  const firefoxManifest = JSON.parse(fs.readFileSync(path.join(tempFirefoxPath, 'manifest.firefox.json'), 'utf8'));
-  const combinedManifest = { ...manifest, ...firefoxManifest, ...{ action: undefined } };
-  fs.writeFileSync(path.join(tempFirefoxPath, 'manifest.json'), JSON.stringify(combinedManifest, null, 2));
+  const firefoxManifestTemplate = JSON.parse(fs.readFileSync(path.join(tempFirefoxPath, 'manifest.firefox.json'), 'utf8'));
+  const firefoxManifest = combineManifests(manifest, firefoxManifestTemplate);
+  delete firefoxManifest.action;
+  fs.writeFileSync(path.join(tempFirefoxPath, 'manifest.json'), JSON.stringify(firefoxManifest, null, 2));
 
   // 4. Delete manifest.firefox.json
   fs.unlinkSync(path.join(tempChromePath, 'manifest.firefox.json'));
@@ -36,6 +37,17 @@ function prepareExtension() {
   archiveExtension(tempFirefoxPath, `src-firefox-${version}.zip`);
 }
 
+function combineManifests(target, source) {
+  const output = { ...target };
+  
+  for (const key in source) {
+    if (source.hasOwnProperty(key)) {
+      output[key] = source[key];
+    }
+  }
+  
+  return output;
+}
 
 function copyFolderRecursiveSync(srcPath, destPath) {
   const entries = fs.readdirSync(srcPath, { withFileTypes: true });

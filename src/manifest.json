@@ -29,6 +29,16 @@
       "run_at": "document_end"
     }
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "*://*.amazonaws.com/*",
+    "*://*.betterttv.net/*",
+    "*://*.7tv.io/*",
+    "*://*.twitch.tv/*",
+    "*://*.ttvnw.net/*"
+  ],
   "permissions": [
     "storage"
   ],
