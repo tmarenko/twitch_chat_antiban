@@ -24,6 +24,10 @@ ProxyStream = {
     getStreamPlaylist: function (channel) {
         return ProxyStream.getPlaylist(channel)
             .then(playlist => {
+                if (!playlist) {
+                    console.log('Twitch Anti-Ban: Stream is offline');
+                    return null;
+                }
                 ProxyStream.qualities = [];
                 const lines = playlist.split('\n');
                 for (let i = 0; i < lines.length; i++) {
@@ -197,16 +201,18 @@ ProxyStream = {
         streamContainer.css("display", "none");
 
         if (Hls.isSupported()) {
-            let video;
-            ProxyStream.hls = new Hls({
-                startLevel: -1,
-                capLevelToPlayerSize: true,
-                autoLevelCapping: -1
-            });
-
             ProxyStream.getStreamPlaylist(channel).then(function (playlist) {
+                if (!playlist) {
+                    return;
+                }
                 streamContainer.parent().append(ProxyStream.createPlayerTemplate());
-                video = document.getElementById('anti-ban-stream-player');
+                let video = document.getElementById('anti-ban-stream-player');
+
+                ProxyStream.hls = new Hls({
+                    startLevel: -1,
+                    capLevelToPlayerSize: true,
+                    autoLevelCapping: -1
+                });
 
                 ProxyStream.hls.loadSource(playlist);
                 ProxyStream.hls.attachMedia(video);
