@@ -187,4 +187,17 @@
 .anti-ban-quality-option.active {
     color: #9147ff;
     background: rgba(145, 71, 255, 0.1);
+}
+
+.anti-ban-offline-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 25px;
+    border-radius: 4px;
 } 

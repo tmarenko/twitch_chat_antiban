@@ -229,6 +229,15 @@ ProxyStream = {
         if (Hls.isSupported()) {
             ProxyStream.getStreamPlaylist(channel).then(function (playlist) {
                 if (!playlist) {
+                    console.log('Twitch Anti-Ban: Stream is offline');
+                    streamContainer.parent().append(`
+                        <div id="anti-ban-stream">
+                            <div class="anti-ban-video-player-container">
+                                <div class="anti-ban-offline-message">
+                                    Stream is currently offline
+                                </div>
+                            </div>
+                        </div>`);
                     return;
                 }
                 streamContainer.parent().append(ProxyStream.createPlayerTemplate());
