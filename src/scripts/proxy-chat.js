@@ -199,6 +199,7 @@ ProxyChat = {
         chatContainer.removeClass();
         chatContainer.addClass("chat-list--default");
         chatContainer.html(proxyChat);
+        chatContainer.attr('style', 'display: block !important;');
         chatContainer.append(chatPaused);
         chatPaused.on("click", () => {
             const chatContainer = $('.chat-list--default');
