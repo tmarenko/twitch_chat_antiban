@@ -206,7 +206,7 @@ ProxyStream = {
             }
         });
 
-        fullscreenBtn.on('click', () => {
+        const toggleFullscreen = () => {
             if (!document.fullscreenElement) {
                 videoContainer.requestFullscreen().catch(err => {
                     console.log(`Error attempting to enable fullscreen: ${err.message}`);
@@ -214,7 +214,10 @@ ProxyStream = {
             } else {
                 document.exitFullscreen();
             }
-        });
+        };
+
+        fullscreenBtn.on('click', toggleFullscreen);
+        video.addEventListener('dblclick', toggleFullscreen);
 
         document.addEventListener('fullscreenchange', () => {
             fullscreenBtn.text(document.fullscreenElement ? '⛶' : '⛶');
