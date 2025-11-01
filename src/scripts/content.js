@@ -1,6 +1,24 @@
+const banChecks = [];
+const streamBanChecks = [];
+
 function exists(selector) {
     return $(selector).length > 0;
 }
+
+function checkTwitchLayout() {
+    const now = Date.now();
+    banChecks.push({ time: now, value: isBanned() });
+    streamBanChecks.push({ time: now, value: isStreamBanned() });
+
+    const threshold = now - 3000;
+    while (banChecks.length && banChecks[0].time < threshold) {
+        banChecks.shift();
+    }
+    while (streamBanChecks.length && streamBanChecks[0].time < threshold) {
+        streamBanChecks.shift();
+    }
+}
+
 
 function isBanned() {
     return [
@@ -21,6 +39,13 @@ function isStreamBanned() {
     ].some(exists);
 }
 
+function isBannedConsistent() {
+    return banChecks.filter(check => check.value).length >= 3;
+}
+
+function isStreamBannedConsistent() {
+    return streamBanChecks.filter(check => check.value).length >= 3;
+}
 
 function getChannel() {
     // support for embedded location
@@ -55,13 +80,15 @@ $(function () {
             return;
         }
 
-        if (isBanned() && !exists('#anti-ban-chat')) {
+        checkTwitchLayout();
+
+        if (isBannedConsistent() && !exists('#anti-ban-chat')) {
             console.log("Twitch Anti-Ban: loading proxy chat");
             ProxyChat.initChat();
             ProxyChat.connect(currentChannel);
         }
 
-        if (isStreamBanned() && !exists('#anti-ban-stream')) {
+        if (isStreamBannedConsistent() && !exists('#anti-ban-stream')) {
             console.log("Twitch Anti-Ban: loading proxy stream");
             ProxyStream.restoreOriginalPlayer();
             ProxyStream.initStream(currentChannel);
@@ -71,5 +98,5 @@ $(function () {
             console.log("Twitch Anti-Ban: restoring original player");
             ProxyStream.restoreOriginalPlayer();
         }
-    }, 3000);
+    }, 1000);
 })
